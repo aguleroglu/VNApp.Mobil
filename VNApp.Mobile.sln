@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "VNApp.Mobil", "VNApp.Mobil\VNApp.Mobil.jsproj", "{D0FA6856-33C9-43C5-B6D6-D663AAE910EC}"
+Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "VNApp.Mobile", "VNApp.Mobil\VNApp.Mobile.jsproj", "{D0FA6856-33C9-43C5-B6D6-D663AAE910EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
