@@ -52,6 +52,9 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
     $scope.newsData = null;
     $scope.stopRead = false;
 
+    $scope.skip = 0;
+    $scope.currentCategory = null;
+
     $scope.recognize = function (successCallback, args) {
         let options = {
             language: "tr-TR",
@@ -67,10 +70,21 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
 
                 var sentence = items[0];
                 console.log(sentence);
+                console.log(JSON.stringify(args));
 
                 $scope.recognized = sentence;
 
-                $http.get('http://vnapp.herokuapp.com/api/speech?q=' + sentence).then(function (response) { args != undefined ? successCallback(response, args) : successCallback(response); });
+                var serviceUrl = 'http://vnapp.herokuapp.com/api/speech?q=' + sentence;
+
+                if (args != undefined & (args.type != undefined & args.type != null)) {
+                    serviceUrl += '&type=' + args.type;
+
+                    if (args.type == 'endof-read-interaction') {
+                        serviceUrl += '&skip=' + $scope.skip;
+                    }
+                }
+
+                $http.get(serviceUrl).then(function (response) { args != undefined ? successCallback(response, args) : successCallback(response); });
 
             }, function cantListen(err) {
                 $scope.text = err;
@@ -78,30 +92,38 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
     }
 
     $scope.read = function (order, maxOrder) {
-        order++;
+        order++; $scope.skip++;
 
         if (order == maxOrder) {
-            $scope.speak('Başka haber dinlemek ister misin?', '$scope.recognize($scope.nextInteraction)');
+            $scope.speak('Başka haber dinlemek ister misin?', '$scope.recognize($scope.endOfReadInteraction, { type: "endof-read-interaction" })');
             return;
         }
 
         setTimeout(function () {
-            $scope.speak((order + 1) + '. haber. ' + $scope.newsData.data[order].Title, ('$scope.afterRead({0}, {1})').format(order, maxOrder));
+            $scope.speak((order + 1) + '. haber. ' + $scope.newsData.Data[order].Description, ('$scope.afterRead({0}, {1})').format(order, maxOrder));
         }, 300);
 
     }
 
-    $scope.firstInteraction = function (response) {
-        $scope.newsData = response.data;
-
-        var res = $scope.newsData;
-        console.log(JSON.stringify(res));
-
-        if (res.Intent != "read") {
-            $scope.speak('Ne dediğini anlamadım tatlım.', '$scope.recognize($scope.firstInteraction)');
-            return;
+    $scope.responseHasError = function (response) {
+        if (response.data.Error & response.data.Message == null) {
+            $scope.speak('Bir hata oluştu!');
+            return true;
         }
 
+        if (response.data.Error & response.data.Message != null) {
+            $scope.speak(response.data.Message);
+            return true;
+        }
+
+        if (response.data.Message != null) {
+            return $scope.speak(response.data.Message, function () { return false; });
+        }
+
+        return false;
+    }
+
+    $scope.readResponse = function (res) {
         if (res.Category == null) {
             $scope.speak(res.Count + ' tane haber okuyorum.');
         }
@@ -110,20 +132,74 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
         }
 
         var order = 0;
-        var maxOrder = res.data.length;
-        $scope.speak((order + 1) + '. haber. ' + res.data[order].Title, ('$scope.afterRead({0}, {1})').format(order, maxOrder));
+        var maxOrder = res.Data.length;
+        $scope.speak((order + 1) + '. haber. ' + res.Data[order].Description, ('$scope.afterRead({0}, {1})').format(order, maxOrder));
     }
 
-    $scope.nextInteraction = function (response) {
-        $scope.firstInteraction(response);
+    $scope.firstInteraction = function (response) {
+        if ($scope.responseHasError(response)) {
+            return;
+        }
+
+        $scope.newsData = response.data;
+
+        $scope.currentCategory = $scope.newsData.Category;
+
+        var res = $scope.newsData;
+        console.log(JSON.stringify(res));
+
+        if (res.Intent == "read" | res.Intent == "search" | res.Intent == "yes") {
+            $scope.readResponse(res);
+        }
+        else if (res.Intent == "stop" | res.Intent == "no") {
+            $scope.speak('Peki.');
+        }
+        else {
+            $scope.speak('Ne dediğini anlamadım tatlım.', '$scope.recognize($scope.firstInteraction, { type: "first-interaction" })');
+            return;
+        }
+    }
+
+    $scope.endOfReadInteraction = function (response, args) {
+        if ($scope.responseHasError(response)) {
+            return;
+        }
+
+        $scope.newsData = response.data;
+
+        var sameCategory = $scope.currentCategory == $scope.newsData.Category;
+
+        var res = $scope.newsData;
+        console.log(JSON.stringify(res));
+        
+        if (res.Intent == "read" | res.Intent == "search" | res.Intent == "yes") {
+            if (!sameCategory) {
+                $scope.currentCategory = $scope.newsData.Category;
+                $scope.skip = 0;
+            }
+
+            $scope.readResponse(res);
+        }
+        else if (res.Intent == "stop" | res.Intent == "no") {
+            $scope.speak('Peki.');
+        }
+        else {
+            $scope.speak('Ne dediğini anlamadım tatlım.', '$scope.recognize($scope.endOfReadInteraction, { type: "endof-read-interaction" })');
+            return;
+        }
     }
 
     $scope.detailInteraction = function (response, args) {
+        if ($scope.responseHasError(response)) {
+            return;
+        }
+
         var res = response.data;
+
         console.log(JSON.stringify(res));
 
-        if (res.Intent == "yes") {
-            $scope.speak('Sana bu haberin detayını okuyamam bebişim.', ('$scope.read({0}, {1})').format(args.order, args.maxOrder));
+        if (res.Intent == "yes" | res.Intent == "read") {
+            $scope.speak($scope.newsData.Data[args.order].Text, ('$scope.read({0}, {1})').format(args.order, args.maxOrder));
         }
         else if (res.Intent == "stop") {
             $scope.speak('Peki.');
@@ -134,6 +210,6 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
     }
 
     $scope.afterRead = function (order, maxOrder) {
-        $scope.speak('Detayını dinlemek ister misin?', ('$scope.recognize($scope.detailInteraction, { order: {0}, maxOrder: {1} })').format(order, maxOrder));
+        $scope.speak('Detayını dinlemek ister misin?', ('$scope.recognize($scope.detailInteraction, { type: "after-read-interaction", order: {0}, maxOrder: {1} })').format(order, maxOrder));
     }
 }]);
