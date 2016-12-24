@@ -14,6 +14,10 @@
     });
 })
 
+VNApp.controller('LoginController', ['$scope', '$ionicPlatform', '$http', function ($scope, $ionicPlatform, $http) {
+
+}]);
+
 VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', function ($scope, $ionicPlatform, $http) {
 
     $ionicPlatform.ready(function () {
@@ -99,4 +103,3 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
         }, function (reason) { });
     }
 }]);
-

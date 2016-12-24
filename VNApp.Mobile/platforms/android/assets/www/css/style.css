@@ -1,1 +1,37 @@
-﻿/* Empty. Add your own CSS if you like */
+﻿body,
+.card,
+.list-inset {
+  background: #e5e5e5;
+}
+
+.button-red {
+  background: #ed1c24 !important;
+  color: #fff !important;
+}
+
+.checkbox-red input:before,
+.checkbox-red .checkbox-icon:before {
+  border-color: #ed1c24; 
+}
+
+.checkbox-red input:checked:before,
+.checkbox-red input:checked + .checkbox-icon:before {
+  background: #ed1c24;
+  border-color: #ed1c24;
+}
+
+.login-logo {
+  padding: 20px 10px 0 10px;
+}
+
+.bar-powered-by {
+  text-align: center;
+  line-height: 25px;
+  justify-content: center;
+}
+
+.image-powered-by {
+  height: 25px;
+  margin: 0 5px;
+  vertical-align: middle;
+}

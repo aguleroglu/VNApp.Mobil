@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <title></title>
+
+  <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+
+  <script src="js/platformOverrides.js"></script>
+
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+  <script src="cordova.js"></script>
+
+  <script src="../plugins/cordova-plugin-tts/www/tts.js"></script>
+  <script src="../plugins/cordova-plugin-speechrecognition/www/speechRecognition.js"></script>
+  <script src="js/ng-cordova.min.js"></script>
+
+  <script src="js/controllers.js"></script>
+</head>
+<body ng-app="VNApp" ng-controller="LoginController">
+  <img class="full-image login-logo" src="http://www.logospike.com/wp-content/uploads/2015/06/Batman_Logo_06.jpg" />
+
+  <div class="list list-inset">
+    <label class="item item-input">
+      <input type="text" placeholder="Kullanıcı Adı">
+    </label>
+    <label class="item item-input">
+      <input type="password" placeholder="Şifre">
+    </label>
+    <ion-checkbox class="checkbox-red">Beni Hatırla</ion-checkbox>
+    <button class="button button-block button-positive button-red" onclick="window.location.href = 'index.html';">
+      Giriş Yap
+    </button>
+    <button class="button button-block button-clear button-dark">
+      Üye Ol
+    </button>
+  </div>
+
+  <div class="bar bar-footer bar-clear bar-powered-by">
+      Powered by  <img class="image-powered-by" src="http://s.hurriyet.com.tr/static/img/hurriyet/hurriyet-logo.svg" />
+  </div>
+</body>
+</html>
