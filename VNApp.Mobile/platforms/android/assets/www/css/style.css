@@ -1,7 +1,7 @@
 ﻿body,
 .card,
 .list-inset {
-  background: #e5e5e5;
+  background: #e5e5e5 !important;
 }
 
 .button-red {
@@ -34,4 +34,20 @@
   height: 25px;
   margin: 0 5px;
   vertical-align: middle;
+}
+
+.button-mic {
+  position: absolute;
+  width: 40vw;
+  height: 40vw;
+  line-height: 40vw;
+  border-radius: 100%;
+  background: #ed1c24;
+  text-align: center;
+  top: calc(50vh - 20vw);
+  left: 30vw;
+}
+.button-mic i {
+  font-size: 15vw;
+  color: #fff;
 }

@@ -28,17 +28,13 @@
     <!-- your app's js -->
     <script src="js/controllers.js"></script>
   </head>
-  <body ng-app="VNApp" class="platform-android platform-cordova platform-webview">
+  <body ng-app="VNApp" ng-controller="VoiceController" class="platform-android platform-cordova platform-webview">
 
-    <ion-pane>
-      <ion-header-bar class="bar-stable">
-        <h1 class="title">Ionic Blank Starter</h1>
-      </ion-header-bar>
-      <ion-content ng-controller="VoiceController">
-        <button class="ion-button" color="secondary" ng-click="recognize()">Recognize</button>
-        <p ng-model="text"></p>
-        <p ng-model="recognized"></p>
-      </ion-content>
-    </ion-pane>
+    <a class="button-mic" ng-click="recognize()">
+      <i class="icon ion-ios-mic"></i>
+    </a>
+
+    <p ng-model="text"></p>
+    <p ng-model="recognized"></p>
   </body>
 </html>

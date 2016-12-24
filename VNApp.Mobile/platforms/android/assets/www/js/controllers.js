@@ -95,7 +95,7 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
         TTS.speak({
             text: text,
             locale: 'tr-TR',
-            rate: 1.7
+            rate: 1.3
         }, function () {
             if(callback!=null){
                 callback(i);
