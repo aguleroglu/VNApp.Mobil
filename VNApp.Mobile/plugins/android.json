@@ -30,6 +30,9 @@
         },
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "io.cordova.myapp1e2f71"
+        },
+        "cordova-plugin-insomnia": {
+            "PACKAGE_NAME": "io.cordova.myapp1e2f71"
         }
     },
     "dependent_plugins": {}
