@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -22,16 +22,22 @@
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
+    <script src="../plugins/cordova-plugin-tts/www/tts.js"></script>
+    <script src="../plugins/cordova-plugin-speechrecognition/www/speechRecognition.js"></script>
+    <script src="js/ng-cordova.min.js"></script>
     <!-- your app's js -->
-    <script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
   </head>
-  <body ng-app="starter">
+  <body ng-app="VNApp">
 
     <ion-pane>
       <ion-header-bar class="bar-stable">
         <h1 class="title">Ionic Blank Starter</h1>
       </ion-header-bar>
-      <ion-content>
+      <ion-content ng-controller="VoiceController">
+        <button class="ion-button" color="secondary" ng-click="recognize()">Recognize</button>
+        <p ng-model="text"></p>
+        <p ng-model="recognized"></p>
       </ion-content>
     </ion-pane>
   </body>
