@@ -21,20 +21,21 @@
   <script src="js/controllers.js"></script>
 </head>
 <body ng-app="VNApp" ng-controller="LoginController">
-  <img class="full-image login-logo" src="http://www.logospike.com/wp-content/uploads/2015/06/Batman_Logo_06.jpg" />
+  <img class="full-image login-logo" src="img/voicenews.png" />
 
   <div class="list list-inset">
     <label class="item item-input">
-      <input type="text" placeholder="Kullanıcı Adı">
+      <input type="text" ng-model="username" placeholder="Kullanıcı Adı">
     </label>
     <label class="item item-input">
-      <input type="password" placeholder="Şifre">
+      <input type="password" ng-model="password" placeholder="Şifre">
     </label>
-    <ion-checkbox class="checkbox-red">Beni Hatırla</ion-checkbox>
-    <button class="button button-block button-positive button-red" onclick="window.location.href = 'index.html';">
+    <ion-checkbox class="checkbox-primary">Beni Hatırla</ion-checkbox>
+    <label>{{Message}}</label>
+    <button class="button button-block button-positive button-primary" ng-click="login()">
       Giriş Yap
     </button>
-    <button class="button button-block button-clear button-dark">
+    <button onclick="window.location.href='register.html'" class="button button-block button-clear button-dark">
       Üye Ol
     </button>
   </div>

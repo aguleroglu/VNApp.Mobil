@@ -20,28 +20,28 @@
 
   <script src="js/controllers.js"></script>
 </head>
-<body ng-app="VNApp" ng-controller="LoginController">
+<body ng-app="VNApp" ng-controller="RegisterController">
   <img class="full-image login-logo" src="img/voicenews.png" />
 
   <div class="list list-inset">
+
     <label class="item item-input">
       <input type="text" ng-model="username" placeholder="Kullanıcı Adı">
     </label>
     <label class="item item-input">
       <input type="password" ng-model="password" placeholder="Şifre">
     </label>
-    <ion-checkbox class="checkbox-primary">Beni Hatırla</ion-checkbox>
     <label>{{Message}}</label>
-    <button class="button button-block button-positive button-primary" ng-click="login()">
-      Giriş Yap
-    </button>
-    <button onclick="window.location.href='register.html'" class="button button-block button-clear button-dark">
+    <button class="button button-block button-positive button-primary" ng-click="register()">
       Üye Ol
+    </button>
+    <button onclick="window.location.href='login.html'" class="button button-block button-clear button-dark">
+      Giriş Yap
     </button>
   </div>
 
   <div class="bar bar-footer bar-clear bar-powered-by">
-      Powered by  <img class="image-powered-by" src="http://s.hurriyet.com.tr/static/img/hurriyet/hurriyet-logo.svg" />
+    Powered by  <img class="image-powered-by" src="http://s.hurriyet.com.tr/static/img/hurriyet/hurriyet-logo.svg" />
   </div>
 </body>
 </html>

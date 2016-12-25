@@ -24,7 +24,68 @@ var VNApp = angular.module('VNApp', ['ionic', 'ngCordova'])
 })
 
 VNApp.controller('LoginController', ['$scope', '$ionicPlatform', '$http', function ($scope, $ionicPlatform, $http) {
+    $ionicPlatform.ready(function () {
+        var token = window.localStorage.getItem("LOCAL_TOKEN_KEY");
 
+        if (token != null & token != undefined & token != '') {
+            window.location.href = 'index.html';
+        }
+    });
+
+    $scope.login = function () {
+        var email = $scope.username;
+        var password = $scope.password;
+
+        $http.post('http://vnapp.herokuapp.com/api/user/signin', { email: email, password: password }).then(function (response) {
+            var res = response.data;
+            if (res.success == true) {
+                window.localStorage.setItem("LOCAL_TOKEN_KEY", res.id);
+                var token = window.localStorage.getItem("LOCAL_TOKEN_KEY");
+                window.location.href = 'index.html';
+            }
+            else {
+                $scope.Message = res.message;
+            }
+
+        });
+    }
+
+}]);
+
+VNApp.controller('RegisterController', ['$scope', '$ionicPlatform', '$http', function ($scope, $ionicPlatform, $http) {
+    $ionicPlatform.ready(function () {
+        var token = window.localStorage.getItem("LOCAL_TOKEN_KEY");
+
+        if (token != null & token != undefined & token != '') {
+            window.location.href = 'index.html';
+        }
+    });
+
+    $scope.register = function () {
+        var email = $scope.username;
+        var password = $scope.password;
+
+        $http.post('http://vnapp.herokuapp.com/api/user/signup', { email: email, password: password }).then(function (response) {
+            var res = response.data;
+            if (res.success == true) {
+                window.localStorage.setItem("LOCAL_TOKEN_KEY", res.id);
+                var token = window.localStorage.getItem("LOCAL_TOKEN_KEY");
+                window.location.href = 'index.html';
+            }
+            else {
+                $scope.Message = res.message;
+            }
+
+        });
+    }
+
+}]);
+
+VNApp.controller('LogOutController', ['$scope', '$ionicPlatform', '$http', function ($scope, $ionicPlatform, $http) {
+    $scope.logout = function () {
+        window.localStorage.removeItem("LOCAL_TOKEN_KEY");
+        window.location.href = 'login.html';
+    }
 }]);
 
 VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', function ($scope, $ionicPlatform, $http) {
@@ -40,11 +101,21 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
             rate: 1.2
         }, function () {
             if (successCallBack != null & successCallBack != undefined) {
-                eval(successCallBack);
+                if (typeof successCallBack === 'function') {
+                    successCallBack();
+                }
+                else {
+                    eval(successCallBack);
+                }
             }
         }, function (reason) {
             if (errorCallback != null & errorCallback != undefined) {
-                eval(errorCallback);
+                if (typeof errorCallback === 'function') {
+                    errorCallback();
+                }
+                else {
+                    eval(errorCallback);
+                }
             }
         });
     }
@@ -54,6 +125,14 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
 
     $scope.skip = 0;
     $scope.currentCategory = null;
+    $scope.currentLocation = null;
+
+    $scope.order = 0;
+    $scope.maxOrder = 0;
+
+    $scope.NewsAvaible = false;
+    $scope.NewsTitle = '';
+    $scope.NewsImageUrl = '';
 
     $scope.recognize = function (successCallback, args) {
         let options = {
@@ -81,8 +160,14 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
 
                     if (args.type == 'endof-read-interaction') {
                         serviceUrl += '&skip=' + $scope.skip;
+                        if ($scope.currentCategory != null) { serviceUrl += '&category=' + $scope.currentCategory; }
+                        if ($scope.currentLocation != null) { serviceUrl += '&location=' + $scope.currentLocation; }
+                        if ($scope.newsData.Type != undefined & $scope.newsData.Type != null) { serviceUrl += '&speechType=' + $scope.newsData.Type; }
+                        if ($scope.newsData.Emotion != undefined & $scope.newsData.Emotion != null) { serviceUrl += '&emotion=' + $scope.newsData.Emotion; }
                     }
                 }
+
+                console.log(serviceUrl);
 
                 $http.get(serviceUrl).then(function (response) { args != undefined ? successCallback(response, args) : successCallback(response); });
 
@@ -92,15 +177,31 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
     }
 
     $scope.read = function (order, maxOrder) {
-        order++; $scope.skip++;
-
         if (order == maxOrder) {
             $scope.speak('Başka haber dinlemek ister misin?', '$scope.recognize($scope.endOfReadInteraction, { type: "endof-read-interaction" })');
             return;
         }
 
         setTimeout(function () {
-            $scope.speak((order + 1) + '. haber. ' + $scope.newsData.Data[order].Description, ('$scope.afterRead({0}, {1})').format(order, maxOrder));
+            var data = $scope.newsData.Data[order];
+
+            if (data.ImageUrl == null) {
+                $scope.NewsImageUrl = '';
+            }
+            else {
+                $scope.NewsImageUrl = data.ImageUrl;
+            }
+
+            $scope.NewsTitle = data.Title;
+
+            $scope.NewsAvaible = true;
+
+            $scope.$apply(function () {
+                $scope.order = order;
+                $scope.maxOrder = maxOrder;
+
+                $scope.speak((order + 1) + '. haber. ' + data.Description, ('$scope.afterRead({0}, {1})').format(order, maxOrder));
+            });
         }, 300);
 
     }
@@ -117,7 +218,8 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
         }
 
         if (response.data.Message != null) {
-            return $scope.speak(response.data.Message, function () { return false; });
+            $scope.speak(response.data.Message);
+            return false;
         }
 
         return false;
@@ -125,15 +227,18 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
 
     $scope.readResponse = function (res) {
         if (res.Category == null) {
-            $scope.speak(res.Count + ' tane haber okuyorum.');
+            $scope.speak(res.Count + ' tane haber okuyorum.', function () { $scope.readResponseDetail(res) });
         }
         else {
-            $scope.speak(res.Count + ' tane ' + res.Category + ' haberi okuyorum.');
+            $scope.speak(res.Count + ' tane ' + res.Category + ' haberi okuyorum.', function () { $scope.readResponseDetail(res) });
         }
+    }
 
+    $scope.readResponseDetail = function (res) {
         var order = 0;
         var maxOrder = res.Data.length;
-        $scope.speak((order + 1) + '. haber. ' + res.Data[order].Description, ('$scope.afterRead({0}, {1})').format(order, maxOrder));
+
+        $scope.read(order, maxOrder);
     }
 
     $scope.firstInteraction = function (response) {
@@ -144,6 +249,7 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
         $scope.newsData = response.data;
 
         $scope.currentCategory = $scope.newsData.Category;
+        $scope.currentLocation = $scope.newsData.Location;
 
         var res = $scope.newsData;
         console.log(JSON.stringify(res));
@@ -171,7 +277,7 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
 
         var res = $scope.newsData;
         console.log(JSON.stringify(res));
-        
+
         if (res.Intent == "read" | res.Intent == "search" | res.Intent == "yes") {
             if (!sameCategory) {
                 $scope.currentCategory = $scope.newsData.Category;
@@ -198,8 +304,11 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
 
         console.log(JSON.stringify(res));
 
+        args.order++;
+        $scope.skip++;
+
         if (res.Intent == "yes" | res.Intent == "read") {
-            $scope.speak($scope.newsData.Data[args.order].Text, ('$scope.read({0}, {1})').format(args.order, args.maxOrder));
+            $scope.speak($scope.newsData.Data[args.order - 1].Text, ('$scope.read({0}, {1})').format(args.order, args.maxOrder));
         }
         else if (res.Intent == "stop") {
             $scope.speak('Peki.');
@@ -211,5 +320,14 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
 
     $scope.afterRead = function (order, maxOrder) {
         $scope.speak('Detayını dinlemek ister misin?', ('$scope.recognize($scope.detailInteraction, { type: "after-read-interaction", order: {0}, maxOrder: {1} })').format(order, maxOrder));
+    }
+
+    $scope.stopSpeak = function () {
+        $scope.speak('');
+    }
+
+    $scope.nextNews = function () {
+        $scope.skip++;
+        $scope.read($scope.order + 1, $scope.maxOrder);
     }
 }]);

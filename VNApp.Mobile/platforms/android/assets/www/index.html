@@ -1,40 +1,59 @@
 ﻿<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title></title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <title></title>
 
-    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+  <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
 
-    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
-    <link href="css/ionic.app.css" rel="stylesheet">
-    -->
+  <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+  <link href="css/ionic.app.css" rel="stylesheet">
+  -->
+  <!--For users deploying their apps to Windows 8.1 or Android Gingerbread, platformOverrided.js
+  will inject platform-specific code from the /merges folder -->
+  <script src="js/platformOverrides.js"></script>
 
-    <!--For users deploying their apps to Windows 8.1 or Android Gingerbread, platformOverrided.js
-    will inject platform-specific code from the /merges folder -->
-    <script src="js/platformOverrides.js"></script>
+  <!-- ionic/angularjs js -->
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
 
-    <!-- ionic/angularjs js -->
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
+  <!-- cordova script (this will be a 404 during development) -->
+  <script src="cordova.js"></script>
 
-    <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
-
-    <script src="../plugins/cordova-plugin-tts/www/tts.js"></script>
-    <script src="../plugins/cordova-plugin-speechrecognition/www/speechRecognition.js"></script>
-    <script src="js/ng-cordova.min.js"></script>
-    <!-- your app's js -->
-    <script src="js/controllers.js"></script>
-  </head>
-  <body ng-app="VNApp" ng-controller="VoiceController" class="platform-android platform-cordova platform-webview">
-
+  <script src="../plugins/cordova-plugin-tts/www/tts.js"></script>
+  <script src="../plugins/cordova-plugin-speechrecognition/www/speechRecognition.js"></script>
+  <script src="js/ng-cordova.min.js"></script>
+  <!-- your app's js -->
+  <script src="js/controllers.js"></script>
+</head>
+<body ng-app="VNApp" ng-controller="VoiceController" class="voice-page platform-android platform-cordova platform-webview">
+  <div class="news-content">
+    <div class="news-content-logo-container">
+      <img class="full-image news-content-logo" src="img/voicenews.png" />
+    </div>
+    <div class="card" ng-show="NewsAvaible">
+      <div class="item item-divider item-text-wrap">{{NewsTitle}}</div>
+      <!--<div class="item item-text-wrap">
+      </div>-->
+      <div class="item item-image">
+        <img src="{{NewsImageUrl}}" />
+      </div>
+    </div>
+  </div>
+  <div class="voice-controls">
     <a class="button-mic" ng-click="recognize(firstInteraction, { type: 'first-interaction' })">
       <i class="icon ion-ios-mic"></i>
     </a>
 
-    <p ng-model="text"></p>
-    <p ng-model="recognized"></p>
-  </body>
+    <a class="button-stop" ng-click="stopSpeak()">
+      <i class="icon ion-stop"></i>
+    </a>
+
+    <a class="button-next" ng-click="nextNews(order, maxOrder)">
+      <i class="icon ion-ios-skipforward"></i>
+    </a>
+  </div>
+
+</body>
 </html>
