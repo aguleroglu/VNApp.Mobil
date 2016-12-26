@@ -49,6 +49,13 @@ module.exports = [
         "clobbers": [
             "window.plugins.insomnia"
         ]
+    },
+    {
+        "file": "plugins/com.moust.cordova.videoplayer/www/videoplayer.js",
+        "id": "com.moust.cordova.videoplayer.VideoPlayer",
+        "clobbers": [
+            "VideoPlayer"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -62,7 +69,8 @@ module.exports.metadata =
     "cordova-plugin-splashscreen": "3.2.2",
     "cordova-plugin-statusbar": "2.1.3",
     "ionic-plugin-keyboard": "2.2.1",
-    "cordova-plugin-insomnia": "4.2.0"
+    "cordova-plugin-insomnia": "4.2.0",
+    "com.moust.cordova.videoplayer": "1.0.1"
 };
 // BOTTOM OF METADATA
 });

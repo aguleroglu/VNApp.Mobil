@@ -92,6 +92,7 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
 
     $ionicPlatform.ready(function () {
         window.plugins.speechRecognition.requestPermission(function successCallback() { }, function errorCallback() { });
+        //$scope.marketing();
     });
 
     $scope.speak = function (text, successCallBack, errorCallback) {
@@ -133,6 +134,44 @@ VNApp.controller('VoiceController', ['$scope', '$ionicPlatform', '$http', functi
     $scope.NewsAvaible = false;
     $scope.NewsTitle = '';
     $scope.NewsImageUrl = '';
+
+    $scope.marketing = function () {
+        $scope.marketingIntro();
+    }
+
+    $scope.marketingIntro = function () {
+        TTS.speak({
+            text: "Merhaba ben Viyen. sana istediğin haberlere ulaşmanda yardımcı olmak için buradayım. Benimle ilgili kısa bir video var. izlemek ister misin?",
+            locale: 'tr-TR',
+            rate: 1.2
+        }, function () {
+            $scope.recognize($scope.marketingVideo, { type: 'first-interaction' });
+        }, function (reason) {
+        });
+    }
+
+    $scope.marketingVideo = function (response, args) {
+        var res = response.data;
+
+        if (res.Intent == "read" | res.Intent == "yes") {
+            VideoPlayer.play("file:///android_asset/www/img/Voice%20News.mp4",
+                             { scalingMode: VideoPlayer.SCALING_MODE.SCALE_TO_FIT_WITH_CROPPING },
+                             $scope.marketingOutro);
+        }
+        else {
+            $scope.marketingOutro();
+        }
+    }
+
+    $scope.marketingOutro = function () {
+        TTS.speak({
+            text: "Benden haberleri ya da köşe yazılarını okumamı isteyebilirsin. İstersen kategori veya şehirdeki haberleri filtreleyebilir, istediğin kelimenin geçtiği haberleri arayabilirim. Senin için olumlu, olumsuz ve nötür haberleri de ayrıştırabilirim.",
+            locale: 'tr-TR',
+            rate: 1.2
+        },
+        function () { },
+        function (reason) { });
+    }
 
     $scope.recognize = function (successCallback, args) {
         let options = {

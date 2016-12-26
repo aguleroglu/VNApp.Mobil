@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="io.cordova.myapp1e2f71" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" defaultLocale="en-US">
-  <name>VNApp.Mobil</name>
+  <name>Voice News</name>
   <description>An Ionic Framework and Cordova project for Visual Studio</description>
   <author email="vscordovatools@microsoft.com" href="http://taco.visualstudio.com">Visual Studio JS Mobile Tooling</author>
   <content src="login.html" />
@@ -85,4 +85,5 @@
   <plugin name="cordova-plugin-tts" version="0.2.3" />
   <plugin name="cordova-plugin-speechrecognition" version="1.1.1" />
   <plugin name="cordova-plugin-insomnia" version="4.2.0" src="https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git" />
+  <plugin name="com.moust.cordova.videoplayer" version="1.0.1" src="https://github.com/moust/cordova-plugin-videoplayer" />
 </widget>

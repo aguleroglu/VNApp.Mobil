@@ -33,6 +33,9 @@
         },
         "cordova-plugin-insomnia": {
             "PACKAGE_NAME": "io.cordova.myapp1e2f71"
+        },
+        "com.moust.cordova.videoplayer": {
+            "PACKAGE_NAME": "io.cordova.myapp1e2f71"
         }
     },
     "dependent_plugins": {}
